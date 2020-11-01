@@ -53,7 +53,7 @@ namespace FinalController
                     ip.Append("192.168.1.").Append(i);
                     if (PingIp(ip.ToString()))
                     {
-                        //TODO
+                        //TODO 处理iP
                         break;
                     }
                 }
