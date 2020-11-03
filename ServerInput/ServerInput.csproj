@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -9,6 +9,10 @@
       <Reference Include="websocket-sharp, Version=1.0.2.20025, Culture=neutral, PublicKeyToken=5660b08a1845a91e">
         <HintPath>..\..\..\..\..\Desktop\websocket-sharp-master\websocket-sharp\bin\Debug\websocket-sharp.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="websocket-sharp-dotnet-core" Version="1.0.1" />
     </ItemGroup>
 
 </Project>
