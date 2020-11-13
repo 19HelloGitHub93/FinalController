@@ -1,15 +1,16 @@
 ﻿using System;
+using server;
+using Server;
 
-namespace Server
+namespace serverTest
 {
-    internal class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
             ListenAddress serverListen = new ListenAddress(10801, 10802);
             try
             {
-                Console.WriteLine("本机Ip:{0}",serverListen.getIpAddress());
                 while (true)
                 {
                     try
@@ -25,12 +26,11 @@ namespace Server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+                throw;
             }
-            finally
-            {
-                serverListen.Close();
-            }
+            
+            
         }
     }
 }

@@ -1,24 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using System;
 
-namespace FinalController
+namespace Client
 {
-    public class Program
+    internal class Program
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            try
+            {
+                Console.WriteLine("start!!");
+                BroadcastsAddress broadcastsAddress = new BroadcastsAddress(10801,10802);
+                string address = broadcastsAddress.getRemoteAddress(500);
+                Console.WriteLine(address);
+                Console.WriteLine("end!!");
+                Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            
         }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddHostedService<Worker>();
-                });
     }
 }

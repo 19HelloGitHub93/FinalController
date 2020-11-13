@@ -85,26 +85,24 @@ namespace FinalController
             string[] address = getLocalAddress();
             if (address.Length==0)
                 return null;
-
-            List<string> ips = new List<string>();
             
+            List<string> ips = new List<string>();
             foreach (string _address in address)
             {
                 string ipHead = _address.Remove(_address.LastIndexOf('.') + 1);
-                int ipEnd =  Int32.Parse(_address.Remove(0, _address.Length));
+                int ipEnd =  Int32.Parse(_address.Remove(0, ipHead.Length));
                 for (int i = 1; i <= 255; i++)
                 {
                     if(i==ipEnd)
                         continue;
 
-                    string ip = string.Format("{0}.{1}", _address, ipEnd);
+                    string ip = string.Format("{0}.{1}", ipHead, i);
                     if (PingIp(ip))
                     {
                         ips.Add(ip);
                     }
                 }
             }
-
             return ips;
         }
 
