@@ -13,8 +13,7 @@ namespace Client
             {
                 Console.WriteLine("start!!");
                 BroadcastsAddress broadcastsAddress = new BroadcastsAddress(10801,10802);
-                string address = broadcastsAddress.getRemoteAddress(1000);
-                Console.WriteLine(address);
+                broadcastsAddress.connRemoteAddress(0);
                 Console.WriteLine("end!!");
                 Console.ReadKey();
             }

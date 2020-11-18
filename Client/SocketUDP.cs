@@ -5,12 +5,18 @@ using System.Text;
 
 namespace Client
 {
+    //public delegate void ReceiveMsgDelegate(string ip, string msg);
+    
     public class SocketUDP
     {
         private UdpClient _server;
         private string _ip;
         private int _port;
         private const string CLOSE_LOCALSERVER = "closeLocalServer";
+        public bool hasResponse = false;
+
+        //public event ReceiveMsgDelegate Ac_ReceiveMsg;
+        public Action<Result> Ac_ReceiveMsg;
 
         public UdpClient Server
         {
@@ -44,31 +50,6 @@ namespace Client
             _server.Send(b_Data, b_Data.Length, targetPoint as IPEndPoint);
         }
 
-        public Result ReceiveMessage()
-        {
-            //EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            //byte[] data = new byte[1024];
-            //int length = _server.ReceiveFrom(data, ref remoteEndPoint);
-            //string message = Encoding.UTF8.GetString(data, 0, length);
-            //IPEndPoint remotePoint = remoteEndPoint as IPEndPoint;
-            
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            byte[] data = _server.Receive(ref remoteEndPoint);
-            string message = Encoding.UTF8.GetString(data);
-            
-            Console.WriteLine("接收到{0}",message);
-            if (message.Equals(CLOSE_LOCALSERVER))
-                _Close();
-
-            return new Result()
-            {
-                address = remoteEndPoint.Address.ToString(),
-                port = remoteEndPoint.Port,
-                message = message,
-            };
-        }
-        
-        
         public void SyncReceiveMessage()
         {
             _server.BeginReceive(receiveCallBack, this);
@@ -83,14 +64,27 @@ namespace Client
                 UdpClient client = _socket.Server;
                 IPEndPoint address = _socket.address;
                 byte[] data = client.EndReceive(ar,ref address);
+                
                 if (data.Length == 0)
+                    return;
+                
+                string msg = Encoding.UTF8.GetString(data, 0, data.Length);
+                hasResponse = true;
+                
+                if (msg.Equals(CLOSE_LOCALSERVER))
                 {
-                    Console.WriteLine("长度0 退出");
-                    client.Close();
+                    _Close();
                     return;
                 }
-                string msg = Encoding.UTF8.GetString(data, 0, data.Length);
-                Console.WriteLine("从[{0}]接收到数据:{1}",address,msg);
+
+                if (Ac_ReceiveMsg != null)
+                    Ac_ReceiveMsg(new Result()
+                    {
+                        address = address.Address.ToString(),
+                        port = address.Port,
+                        message = msg
+                    });
+
                 client.BeginReceive(receiveCallBack, _socket);
             }
             catch (Exception e)
@@ -98,7 +92,7 @@ namespace Client
                 Console.WriteLine(e.Message);
                 if (_socket._server != null)
                 {
-                    Console.WriteLine("异常 退出");
+                    //Console.WriteLine("异常 退出");
                     _socket._server.Close();
                 }
             }
@@ -111,10 +105,8 @@ namespace Client
 
         private void _Close()
         {
-            Console.WriteLine("释放client!!!!");
-            _server.Client.Shutdown(SocketShutdown.Both);
             _server.Close();
-            Console.WriteLine("释放client成功");
+            //Console.WriteLine("{0}:{1}释放client成功",_ip,_port);
         }
         
         public class Result

@@ -14,7 +14,7 @@ namespace Client
         private int serverPort;
         private string clientSignal; //本地信号
         private string serverSignal; //远端信号
-
+        
         public BroadcastsAddress(int clientPort, int serverPort)
         {
             this.clientPort = clientPort;
@@ -23,72 +23,59 @@ namespace Client
             serverSignal = serverPort.ToString();
         }
 
-        public string getRemoteAddress(int millisecondsTimeout)
+        public void connRemoteAddress(int millisecondsTimeout)
         {
             List<string> address = getLocalAddress();
             if (address.Count == 0)
-                return String.Empty;
+                return;
 
-            string ip = String.Empty;
-
-//            Task task_receiveMessage = null;
-//            Task task_broadMessage = null;
-
-            Dictionary<string, Thread> broadMsgThreadDic = new Dictionary<string, Thread>();
+            Dictionary<string, SocketUDP> broadMsgDic = new Dictionary<string, SocketUDP>();
 
             foreach (string _address in address)
             {
                 string ipHead = _address.Remove(_address.LastIndexOf('.') + 1);
                 int ipEnd = Int32.Parse(_address.Remove(0, ipHead.Length));
+                
                 SocketUDP client = new SocketUDP(_address, clientPort);
-                Thread t = new Thread(() =>
+                client.Ac_ReceiveMsg += AcReceiveMsg;
+                broadMsgDic.Add(getChildIp(_address,3),client);
+                
+                Console.WriteLine("{0}开始侦听...",_address);
+                client.SyncReceiveMessage();
+                for (int i = 1; i < 255; i++)
                 {
+                    string tempIp = string.Format("{0}{1}", ipHead, i);
                     try
                     {
-                        while (true)
-                        {
-                            SocketUDP.Result respone = client.ReceiveMessage();
-                            if (respone.message.Equals(serverSignal))
-                            {
-                                ip = string.Format("{0}:{1}", respone.address, respone.port);
-                                break;
-                            }
-                        }
+                        Console.WriteLine(tempIp);
+                        client.Send(clientSignal, tempIp, serverPort);
+                        Console.WriteLine("发送{0}到{1}:{2}",clientSignal,tempIp,serverPort);
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
-                    finally
-                    {
-                        client.Close();
-                    }
-                });
-                
-                broadMsgThreadDic.Add(getChildIp(_address,3),t);
-                
-                Console.WriteLine("{0}开始侦听...",_address);
-                t.Start();
-
-                for (int i = 1; i <= 255; i++)
-                {
-                    string tempIp = string.Format("{0}{1}", ipHead, i);
-                    client.Send(clientSignal, tempIp, serverPort);
                 }
-                
             }
             
             Thread.Sleep(millisecondsTimeout);
-            foreach (string key in broadMsgThreadDic.Keys)
+            foreach (string key in broadMsgDic.Keys)
             {
-                if (ip == String.Empty||!key.Equals(getChildIp(ip, 3)))
+                if (!broadMsgDic[key].hasResponse)
                 {
                     Console.WriteLine("{0}释放网段...",key);
-                    broadMsgThreadDic[key].Abort();
+                    broadMsgDic[key].Close();
                 }
             }
+        }
 
-            return ip;
+        private void AcReceiveMsg(SocketUDP.Result result)
+        {
+            if (result.message.Equals(serverSignal))
+            {
+                string ip = string.Format("{0}:{1}", result.address, result.port);
+                Console.WriteLine("收到{0}：{1}",ip,result.message);
+            }
         }
 
         //获取本地Ip集
@@ -123,24 +110,5 @@ namespace Client
                 return String.Empty;
             return childs[index - 1];
         }
-
-        /*private bool PingIp(string strIP)
-        {
-            bool bRet = false;
-            try
-            {
-                Ping pingSend = new Ping();
-                PingReply reply = pingSend.Send(strIP, 100);
-                if (reply.Status == IPStatus.Success)
-                    bRet = true;
-            }
-            catch (Exception e)
-            {
-                bRet = false;
-                Console.WriteLine(e.Message);
-            }
-
-            return bRet;
-        }*/
     }
 }
