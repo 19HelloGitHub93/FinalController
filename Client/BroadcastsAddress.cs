@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
+
+//using System.Threading.Tasks;
 
 namespace Client
 {
     public class BroadcastsAddress
     {
-        private int clientPort;//本机端口
+        private int clientPort; //本机端口
         private int serverPort;
-        private string clientSignal;//本地信号
-        private string serverSignal;//远端信号
+        private string clientSignal; //本地信号
+        private string serverSignal; //远端信号
 
-        public BroadcastsAddress(int clientPort,int serverPort)
+        public BroadcastsAddress(int clientPort, int serverPort)
         {
             this.clientPort = clientPort;
             this.serverPort = serverPort;
@@ -27,68 +28,69 @@ namespace Client
             List<string> address = getLocalAddress();
             if (address.Count == 0)
                 return String.Empty;
-            
+
             string ip = String.Empty;
-            
-            Task task_receiveMessage = null;
-            Task task_broadMessage = null;
-                
+
+//            Task task_receiveMessage = null;
+//            Task task_broadMessage = null;
+
+            Dictionary<string, Thread> broadMsgThreadDic = new Dictionary<string, Thread>();
+
             foreach (string _address in address)
             {
-                string ipHead = _address.Remove(_address.LastIndexOf('.')+1);
+                string ipHead = _address.Remove(_address.LastIndexOf('.') + 1);
                 int ipEnd = Int32.Parse(_address.Remove(0, ipHead.Length));
-                
-                SocketUDP client = new SocketUDP(_address,clientPort);
-                
-                try
+                SocketUDP client = new SocketUDP(_address, clientPort);
+                Thread t = new Thread(() =>
                 {
-                    bool beginReceive = true;
-                    
-                    task_receiveMessage = new Task(() =>
+                    try
                     {
-                        SocketUDP.Result respone;
-                        while (beginReceive)
+                        while (true)
                         {
-                            respone = client.ReceiveMessage();
+                            SocketUDP.Result respone = client.ReceiveMessage();
                             if (respone.message.Equals(serverSignal))
                             {
                                 ip = string.Format("{0}:{1}", respone.address, respone.port);
+                                break;
                             }
                         }
-                    });
-                    
-                    task_broadMessage = new Task(() =>
+                    }
+                    catch (Exception e)
                     {
-                        for (int i = 1; i <= 255; i++)
-                        {
-                            string tempIp = string.Format("{0}{1}", ipHead, i);
-                            client.Send(clientSignal, tempIp, serverPort);
-                        }
-
-                        beginReceive = false;
+                        Console.WriteLine(e.Message);
+                    }
+                    finally
+                    {
                         client.Close();
-                    });
-                    
-                    task_receiveMessage.Start();
-                    task_broadMessage.Start();
-                    //task_broadMessage.Wait(millisecondsTimeout);
-                    task_receiveMessage.Wait(millisecondsTimeout);
-//                    Thread.Sleep(millisecondsTimeout);
-//                    return task_receiveMessage.Result;
-                }
-                catch (Exception e)
+                    }
+                });
+                
+                broadMsgThreadDic.Add(getChildIp(_address,3),t);
+                
+                Console.WriteLine("{0}开始侦听...",_address);
+                t.Start();
+
+                for (int i = 1; i <= 255; i++)
                 {
-                    Console.WriteLine(e.Message);
+                    string tempIp = string.Format("{0}{1}", ipHead, i);
+                    client.Send(clientSignal, tempIp, serverPort);
                 }
-                finally
-                {
-                    //client.Close();
-                }
+                
             }
             
+            Thread.Sleep(millisecondsTimeout);
+            foreach (string key in broadMsgThreadDic.Keys)
+            {
+                if (ip == String.Empty||!key.Equals(getChildIp(ip, 3)))
+                {
+                    Console.WriteLine("{0}释放网段...",key);
+                    broadMsgThreadDic[key].Abort();
+                }
+            }
+
             return ip;
         }
-        
+
         //获取本地Ip集
         private List<string> getLocalAddress()
         {
@@ -104,9 +106,24 @@ namespace Client
                     ips.Add(curIp.ToString());
                 }
             }
+
             return ips;
         }
-        
+
+        /// <summary>
+        /// 截取ip子网段
+        /// </summary>
+        /// <param name="ip">源ip</param>
+        /// <param name="index">网段位置</param>
+        /// <returns></returns>
+        private string getChildIp(string ip, int index)
+        {
+            string[] childs = ip.Split('.');
+            if (childs.Length != 4)
+                return String.Empty;
+            return childs[index - 1];
+        }
+
         /*private bool PingIp(string strIP)
         {
             bool bRet = false;

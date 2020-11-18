@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
 namespace Client
 {
@@ -10,7 +13,7 @@ namespace Client
             {
                 Console.WriteLine("start!!");
                 BroadcastsAddress broadcastsAddress = new BroadcastsAddress(10801,10802);
-                string address = broadcastsAddress.getRemoteAddress(500);
+                string address = broadcastsAddress.getRemoteAddress(1000);
                 Console.WriteLine(address);
                 Console.WriteLine("end!!");
                 Console.ReadKey();
@@ -19,7 +22,7 @@ namespace Client
             {
                 Console.WriteLine(e.Message);
             }
-            
         }
+
     }
 }

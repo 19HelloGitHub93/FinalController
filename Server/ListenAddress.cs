@@ -18,6 +18,11 @@ namespace Server
             _server = new SocketUDP(IpAddress.ToString(),port);
         }
 
+        public void send(string msg,string ip,int port)
+        {
+            _server.Send(msg,ip,port);
+        }
+
         public IPAddress getIpAddress()
         {
             return IpAddress;
