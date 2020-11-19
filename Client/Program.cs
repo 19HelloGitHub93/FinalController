@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Client.controller;
+using MiddleProject;
 
 namespace Client
 {
@@ -9,19 +12,30 @@ namespace Client
     {
         public static void Main(string[] args)
         {
+            ClientSocket clientSocket = null;
             try
             {
                 Console.WriteLine("start!!");
-                BroadcastsAddress broadcastsAddress = new BroadcastsAddress(10801,10802);
-                broadcastsAddress.connRemoteAddress(0);
+                clientSocket = new ClientSocket(10801, 10802);
+
+                List<Icontroller> recControllers = new List<Icontroller>();
+                recControllers = AssemblyHandler.CreateInstance<Icontroller>();
+                foreach (Icontroller controller in recControllers)
+                    clientSocket.receiveMsgCallBack += controller.receiveMsgCallBack;
+
+                clientSocket.BeginReceive();
                 Console.WriteLine("end!!");
                 Console.ReadKey();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                if(clientSocket!=null)
+                    clientSocket.Close();
             }
         }
-
     }
 }

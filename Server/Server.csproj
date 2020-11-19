@@ -33,15 +33,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ListenAddress.cs" />
+    <Compile Include="ServerSocket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SocketUDP.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiddleProject\MiddleProject.csproj">
+      <Project>{84af083b-99c0-440d-9e65-392e93d4dc4a}</Project>
+      <Name>MiddleProject</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
