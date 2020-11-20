@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using log4net;
 using MiddleProject;
+using MiddleProject.model;
 
 namespace Client
 {
@@ -43,7 +45,8 @@ namespace Client
                 client.Ac_ReceiveMsg += AC_ReceiveMsgCallBack;
                 serverDic.Add(ToolForIp.getChildIp(_address,3),client);
                 
-                Console.WriteLine("{0}开始侦听...",_address);
+                LogUtil.Log.InfoFormat("{0}开始侦听...",_address);
+                
                 client.SyncReceiveMessage();
                 for (int i = 1; i < 255; i++)
                 {
@@ -56,7 +59,8 @@ namespace Client
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
+                        //Console.WriteLine(e.Message);
+                        LogUtil.Log.Error(e.Message);
                     }
                 }
             }
@@ -67,18 +71,19 @@ namespace Client
         /// </summary>
         /// <param name="result"></param>
         /// <param name="socketUdp"></param>
-        private void AC_ReceiveMsgCallBack(SocketUDP.Result result,SocketUDP socketUdp)
+        private void AC_ReceiveMsgCallBack(Result result,SocketUDP socketUdp)
         {
             string ip = string.Format("{0}:{1}", result.address, result.port);
-            string msg = result.message;
-            Console.WriteLine("收到{0}：{1}",ip,msg);
+            string msg = result.data.msg;
+            LogUtil.Log.InfoFormat("收到{0}：{1}",ip,msg);
             if (receiveMsgCallBack != null)
                 receiveMsgCallBack(result, socketUdp);
         }
 
         public void Close()
         {
-            Console.WriteLine("释放所有网段侦听...");
+            //Console.WriteLine("释放所有网段侦听...");
+            LogUtil.Log.InfoFormat("释放所有网段侦听...");
             foreach (string key in serverDic.Keys)
             {
                 serverDic[key].Close();

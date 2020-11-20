@@ -1,4 +1,6 @@
+using MiddleProject.model;
+
 namespace MiddleProject
 {
-    public delegate void ReceiveMsgDelegate(SocketUDP.Result result, SocketUDP socketUdp);
+    public delegate void ReceiveMsgDelegate(Result result, SocketUDP socketUdp);
 }
