@@ -5,6 +5,6 @@ namespace Client.controller
 {
     public interface IAccept
     {
-        void acceptMessage(Result result, SocketUDP socketUdp);
+        void acceptMessage(Result result);
     }
 }

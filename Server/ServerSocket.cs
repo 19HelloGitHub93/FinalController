@@ -9,23 +9,19 @@ namespace Server
 {
     public class ServerSocket
     {
-        //private ILog _log = LogManager.GetLogger(typeof(ServerSocket));
         private int port;//本机端口
-        private string clientSignal;
-        private string serverSignal;
         private SocketUDP _server;
         private string _ip;
 
         public string Ip => _ip;
-        
-        private Dictionary<string,string> clientDic = new Dictionary<string, string>();
+        public int Port => port;
+
+        private Dictionary<string,IPEndPoint> clientDic = new Dictionary<string, IPEndPoint>();
         public event ReceiveMsgDelegate receiveMsgCallBack;
 
-        public ServerSocket(int clientPort,int serverPort)
+        public ServerSocket(int serverPort)
         {
             this.port = serverPort;
-            this.clientSignal = clientPort.ToString();
-            this.serverSignal = serverPort.ToString();
             this._ip = IPAddress.Any.ToString();
             _server = new SocketUDP(_ip,port);
         }
@@ -36,42 +32,65 @@ namespace Server
             _server.SyncReceiveMessage();
         }
 
-        private void AC_ReceiveMsgCallBack(Result result,SocketUDP socketUdp)
+        private void AC_ReceiveMsgCallBack(Result result)
         {
-            string ip = string.Format("{0}:{1}", result.address, result.port);
-            string msg = result.data.msg;
-
-            LogUtil.Log.InfoFormat("收到{0}：{1}", ip, msg);
-
-            if (msg.Equals(clientSignal))
+            if(!BlockKey.IsBlock(result.data))
+                LogUtil.Log.DebugFormat("收到[{0}]:{1}",result.ipEndPoint,result.data);
+            
+            OrderCode code = result.data.code;
+            if (code == OrderCode.ClientRquest)
             {
-                _server.Send(serverSignal,result.address,result.port);
-                addClient(result.address);
+                Data _data = new Data()
+                {
+                    code = OrderCode.ServerResponse,
+                    msg = "success",
+                };
+                _server.Send(_data,result.ipEndPoint);
+                addClient(result.ipEndPoint);
             }
             
             if (receiveMsgCallBack != null)
-                receiveMsgCallBack(result, socketUdp);
+                receiveMsgCallBack(result);
         }
 
-        public void addClient(string ip)
+        public void Send(Data data,IPEndPoint ipEndPoint)
         {
-            string id = ToolForIp.getChildIp(ip, 4);
+            _server.Send(data,ipEndPoint);
+        }
+
+        public void addClient(IPEndPoint ip)
+        {
+            LogUtil.Log.InfoFormat("客户端 [{0}] 已连接...",ip);
+            string id = ToolForIp.getChildIp(ip.Address.ToString(), 4);
             if (!clientDic.ContainsKey(id))
                 clientDic.Add(id,ip);
+            LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
         }
 
-        public void removeClient(string ip)
+        public void removeClient(IPEndPoint ip)
         {
-            string id = ToolForIp.getChildIp(ip, 4);
+            LogUtil.Log.InfoFormat("客户端 [{0}] 已断开...",ip);
+            string id = ToolForIp.getChildIp(ip.Address.ToString(), 4);
             if (clientDic.ContainsKey(id))
                 clientDic.Remove(id);
+            LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
         }
 
-        public string getClient(string id)
+        public IPEndPoint getClient(string id)
         {
-            string ip = String.Empty;
+            IPEndPoint ip;
             clientDic.TryGetValue(id, out ip);
             return ip;
+        }
+        
+        public List<IPEndPoint> getClients()
+        {
+            List<IPEndPoint> clents = new List<IPEndPoint>();
+            foreach (var item in clientDic.Values)
+            {
+                clents.Add(item);
+            }
+            return clents;
         }
 
         public void Close()

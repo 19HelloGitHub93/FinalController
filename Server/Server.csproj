@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Server</RootNamespace>
     <AssemblyName>Server</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -47,7 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="commend\ICommend.cs" />
+    <Compile Include="accept\CloseAccept.cs" />
+    <Compile Include="accept\HeartBeatAccept.cs" />
+    <Compile Include="accept\IServer.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="commend\OpenNote.cs" />
     <Compile Include="ServerSocket.cs" />
     <Compile Include="Program.cs" />

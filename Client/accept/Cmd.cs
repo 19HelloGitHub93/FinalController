@@ -7,7 +7,7 @@ namespace Client.controller
 {
     public class Cmd:IAccept
     {
-        public void acceptMessage(Result result, SocketUDP socketUdp)
+        public void acceptMessage(Result result)
         {
             Data data = result.data;
             if (data.code==OrderCode.Cmd)

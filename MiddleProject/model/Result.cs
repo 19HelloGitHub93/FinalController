@@ -1,20 +1,25 @@
+using System.Net;
 using Newtonsoft.Json;
 
 namespace MiddleProject.model
 {
     public class Result
     {
-        public string address;
-        public int port;
         public Data data;
+        public IPEndPoint ipEndPoint;
         
         public Result(){}
 
-        public Result(string address, int port, Data data)
+        public Result(Data data,string address, int port)
         {
-            this.address = address;
-            this.port = port;
             this.data = data;
+            this.ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
+        }
+
+        public Result(Data data, IPEndPoint ipEndPoin)
+        {
+            this.data = data;
+            this.ipEndPoint = ipEndPoin;
         }
     }
 }

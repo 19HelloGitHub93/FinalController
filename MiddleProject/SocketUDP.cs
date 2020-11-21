@@ -47,28 +47,28 @@ namespace MiddleProject
             _server = new UdpClient(address);
         }
 
-        public void Send(string data, string ip, int port)
+        public void Send(string msg, IPEndPoint ipEndPoint)
         {
             if (_server != null)
             {
-                EndPoint targetPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+                //EndPoint targetPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 Data _data = new Data()
                 {
                     code = OrderCode.None,
-                    msg = data
+                    msg = msg
                 };
                 byte[] b_Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_data));
-                _server.Send(b_Data, b_Data.Length, targetPoint as IPEndPoint);
+                _server.Send(b_Data, b_Data.Length, ipEndPoint);
             }
         }
         
-        public void Send(Data data, string ip, int port)
+        public void Send(Data data, IPEndPoint ipEndPoint)
         {
             if (_server != null)
             {
-                EndPoint targetPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+                //EndPoint targetPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 byte[] b_Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
-                _server.Send(b_Data, b_Data.Length, targetPoint as IPEndPoint);
+                _server.Send(b_Data, b_Data.Length, ipEndPoint);
             }
         }
 
@@ -97,8 +97,9 @@ namespace MiddleProject
 
                 if (Ac_ReceiveMsg != null)
                 {
-                    Result rs = new Result(address.Address.ToString(), address.Port, JsonConvert.DeserializeObject<Data>(msg));
-                    Ac_ReceiveMsg( rs,this);
+                    Data d = JsonConvert.DeserializeObject<Data>(msg);
+                    Result rs = new Result(d,address);
+                    Ac_ReceiveMsg(rs);
                 }
                     
                 SyncReceiveMessage();
@@ -115,10 +116,10 @@ namespace MiddleProject
             ApplicationIsQuitting = true;
             if (_server != null)
             {
-                _server.Client.Shutdown(SocketShutdown.Both);
+                //_server.Client.Shutdown(SocketShutdown.Both);
                 _server.Close();
                 _server = null;
-                LogUtil.Log.InfoFormat("{0}:{1}释放成功", _ip, _port);
+                LogUtil.Log.InfoFormat("[{0}:{1}] 断开连接...", _ip, _port);
             }
         }
 

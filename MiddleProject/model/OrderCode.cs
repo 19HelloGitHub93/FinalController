@@ -5,5 +5,8 @@ namespace MiddleProject
         None,
         Close,
         Cmd,
+        ClientRquest,
+        ServerResponse,
+        HeartBeat,
     }
 }

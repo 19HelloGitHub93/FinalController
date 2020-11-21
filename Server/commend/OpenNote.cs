@@ -3,9 +3,9 @@ using MiddleProject.model;
 
 namespace Server.commend
 {
-    public class OpenNote:ICommend
+    public class OpenNote:ICommand
     {
-        public Data ClientCommend()
+        public Data ClientCommand()
         {
             return new Data()
             {

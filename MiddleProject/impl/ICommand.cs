@@ -2,8 +2,8 @@ using MiddleProject.model;
 
 namespace Server.commend
 {
-    public interface ICommend
+    public interface ICommand
     {
-        Data ClientCommend();
+        Data ClientCommand();
     }
 }

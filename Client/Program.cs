@@ -10,22 +10,39 @@ namespace Client
 {
     internal class Program
     {
+        private static void init(ClientSocket cs)
+        {
+            List<IAccept> acs = AssemblyHandler.CreateInstance<IAccept>();
+            foreach (IAccept ac in acs)
+            {
+                cs.receiveMsgCallBack += ac.acceptMessage;
+            }
+            
+            List<IClient> cls = AssemblyHandler.CreateInstance<IClient>();
+            foreach (IClient cl in cls)
+            {
+                cl.init(cs);
+            }
+        }
         public static void Main(string[] args)
         {
             ClientSocket clientSocket = null;
             try
             {
-                Console.WriteLine("start!!");
                 clientSocket = new ClientSocket(10801, 10802);
-
-                List<IAccept> recControllers = new List<IAccept>();
-                recControllers = AssemblyHandler.CreateInstance<IAccept>();
-                foreach (IAccept controller in recControllers)
-                    clientSocket.receiveMsgCallBack += controller.acceptMessage;
-
+                
+                init(clientSocket);
+                
                 clientSocket.BeginReceive();
-                Console.WriteLine("end!!");
-                Console.ReadKey();
+
+                while (true)
+                {
+                    string code = Console.ReadLine();
+                    if (code.Equals("exit"))
+                        break;
+                    if (code.Equals("conn"))
+                        clientSocket.reconnect();
+                }
             }
             catch (Exception e)
             {
