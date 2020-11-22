@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Client.accept;
 using MiddleProject;
 using MiddleProject.model;
 
 namespace Client
 {
-    public class ClientSocket
+    public class ClientControl
     {
         private int clientPort; //本机端口
         private int serverPort;
@@ -16,7 +17,7 @@ namespace Client
         private Dictionary<string,IPEndPoint> serverIpDic = new Dictionary<string, IPEndPoint>();
         public event ReceiveMsgDelegate receiveMsgCallBack;
         
-        public ClientSocket(int clientPort, int serverPort)
+        public ClientControl(int clientPort, int serverPort)
         {
             this.clientPort = clientPort;
             this.serverPort = serverPort;
@@ -36,20 +37,6 @@ namespace Client
                 
                 LogUtil.Log.InfoFormat("{0} 开始侦听...",_address);
                 client.SyncReceiveMessage();
-
-                try
-                {
-                    if(client.ApplicationIsQuitting)
-                        break;
-                    client.Send(
-                        new Data(OrderCode.ClientRquest,null), 
-                        new IPEndPoint(IPAddress.Broadcast, serverPort));
-                }
-                catch (Exception e)
-                {
-                    LogUtil.Log.Error(e.Message);
-                }
-                
                 /*
                  string ipHead = _address.Remove(_address.LastIndexOf('.') + 1);
                  int ipEnd = Int32.Parse(_address.Remove(0, ipHead.Length));
@@ -69,6 +56,7 @@ namespace Client
                     }
                 }*/
             }
+            //connect();
         }
 
         /// <summary>
@@ -95,6 +83,29 @@ namespace Client
             addServer(result.ipEndPoint);
             SendToServer(new Data(OrderCode.HeartBeat));
         }
+        
+        public void connect()
+        {
+            foreach (SocketUDP client in clientSocketDic.Values)
+            {
+                client.reset();
+                try
+                {
+                    client.Send(
+                        new Data(OrderCode.ClientRquest), 
+                        new IPEndPoint(IPAddress.Broadcast, serverPort));
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Log.Error(e.Message);
+                }
+            }
+        }
+
+        public bool IsConnected()
+        {
+            return serverIpDic.Count > 0;
+        }
 
         private void addServer(IPEndPoint ip)
         {
@@ -103,9 +114,11 @@ namespace Client
                 serverIpDic.Add(id,ip);
         }
 
-        public void reconnect()
+        public void removeServer(IPEndPoint ip)
         {
-            SendToServer(new Data(OrderCode.ClientRquest));
+            string id = ToolForIp.getChildIp(ip.Address.ToString(), 3);
+            if (serverIpDic.ContainsKey(id))
+                serverIpDic.Remove(id);
         }
 
         public void SendToServer(Data data)
@@ -135,6 +148,7 @@ namespace Client
             
             clientSocketDic.Clear();
             serverIpDic.Clear();
+            (AssemblyHandler.GetInstance<HeartBeat>() as HeartBeat).Close();
         }
 
     }

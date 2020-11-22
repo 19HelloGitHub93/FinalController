@@ -1,6 +1,6 @@
 using MiddleProject.model;
 
-namespace Server.commend
+namespace MiddleProject.impl
 {
     public interface ICommand
     {

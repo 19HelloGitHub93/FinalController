@@ -16,7 +16,7 @@ namespace MiddleProject
         public event ReceiveMsgDelegate Ac_ReceiveMsg;
 
         private readonly static object _lock = new object();
-        private bool applicationIsQuitting = false;
+        private bool applicationIsQuitting;
 
         public bool ApplicationIsQuitting
         {
@@ -45,6 +45,12 @@ namespace MiddleProject
 
             address = new IPEndPoint(IPAddress.Parse(_ip), _port);
             _server = new UdpClient(address);
+            reset();
+        }
+
+        public void reset()
+        {
+            ApplicationIsQuitting = false;
         }
 
         public void Send(string msg, IPEndPoint ipEndPoint)

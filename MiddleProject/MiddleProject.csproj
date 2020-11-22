@@ -54,6 +54,7 @@
     <Compile Include="LogUtil.cs" />
     <Compile Include="model\BlockKey.cs" />
     <Compile Include="model\Data.cs" />
+    <Compile Include="model\Heart.cs" />
     <Compile Include="model\OrderCode.cs" />
     <Compile Include="model\Result.cs" />
     <Compile Include="SocketUDP.cs" />

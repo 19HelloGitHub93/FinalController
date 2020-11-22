@@ -4,10 +4,11 @@ using System.Net;
 using log4net;
 using MiddleProject;
 using MiddleProject.model;
+using Server.accept;
 
 namespace Server
 {
-    public class ServerSocket
+    public class ServerController
     {
         private int port;//本机端口
         private SocketUDP _server;
@@ -19,7 +20,7 @@ namespace Server
         private Dictionary<string,IPEndPoint> clientDic = new Dictionary<string, IPEndPoint>();
         public event ReceiveMsgDelegate receiveMsgCallBack;
 
-        public ServerSocket(int serverPort)
+        public ServerController(int serverPort)
         {
             this.port = serverPort;
             this._ip = IPAddress.Any.ToString();
@@ -46,6 +47,8 @@ namespace Server
                     msg = "success",
                 };
                 _server.Send(_data,result.ipEndPoint);
+                _server.Send(new Data(OrderCode.HeartBeat),result.ipEndPoint);
+                
                 addClient(result.ipEndPoint);
             }
             
@@ -63,17 +66,22 @@ namespace Server
             LogUtil.Log.InfoFormat("客户端 [{0}] 已连接...",ip);
             string id = ToolForIp.getChildIp(ip.Address.ToString(), 4);
             if (!clientDic.ContainsKey(id))
+            {
                 clientDic.Add(id,ip);
-            LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
+                LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
+            }
+            
         }
 
         public void removeClient(IPEndPoint ip)
         {
-            LogUtil.Log.InfoFormat("客户端 [{0}] 已断开...",ip);
             string id = ToolForIp.getChildIp(ip.Address.ToString(), 4);
             if (clientDic.ContainsKey(id))
+            {
                 clientDic.Remove(id);
-            LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
+                LogUtil.Log.InfoFormat("客户端 [{0}] 已断开...",ip);
+                LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
+            }
         }
 
         public IPEndPoint getClient(string id)
@@ -96,6 +104,7 @@ namespace Server
         public void Close()
         {
             _server.Close();
+            (AssemblyHandler.GetInstance<HeartBeat>() as HeartBeat).Close();
         }
     }
 }

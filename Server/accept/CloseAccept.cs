@@ -1,13 +1,13 @@
-using Client.controller;
 using MiddleProject;
+using MiddleProject.impl;
 using MiddleProject.model;
 
 namespace Server.accept
 {
     public class CloseAccept:IAccept,IServer
     {
-        private ServerSocket server;
-        public void init(ServerSocket ss)
+        private ServerController server;
+        public void init(ServerController ss)
         {
             server = ss;
         }

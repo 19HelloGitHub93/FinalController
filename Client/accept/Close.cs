@@ -1,13 +1,14 @@
 using System;
 using MiddleProject;
+using MiddleProject.impl;
 using MiddleProject.model;
 
-namespace Client.controller
+namespace Client.accept
 {
     public class Close:IAccept,IClient
     {
-        private ClientSocket cs;
-        public void init(ClientSocket cs)
+        private ClientControl cs;
+        public void init(ClientControl cs)
         {
             this.cs = cs;
         }

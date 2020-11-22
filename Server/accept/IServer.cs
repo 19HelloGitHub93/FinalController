@@ -5,6 +5,6 @@ namespace Server.accept
 {
     public interface IServer
     {
-        void init(ServerSocket ss);
+        void init(ServerController ss);
     }
 }

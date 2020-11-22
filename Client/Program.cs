@@ -3,46 +3,36 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Client.controller;
+using Client.accept;
 using MiddleProject;
+using MiddleProject.impl;
 
 namespace Client
 {
     internal class Program
     {
-        private static void init(ClientSocket cs)
+        private static void init(ClientControl cs)
         {
             List<IAccept> acs = AssemblyHandler.CreateInstance<IAccept>();
             foreach (IAccept ac in acs)
-            {
                 cs.receiveMsgCallBack += ac.acceptMessage;
-            }
             
             List<IClient> cls = AssemblyHandler.CreateInstance<IClient>();
             foreach (IClient cl in cls)
-            {
                 cl.init(cs);
-            }
         }
         public static void Main(string[] args)
         {
-            ClientSocket clientSocket = null;
+            ClientControl clientControl = null;
             try
             {
-                clientSocket = new ClientSocket(10801, 10802);
+                clientControl = new ClientControl(10801, 10802);
                 
-                init(clientSocket);
+                init(clientControl);
                 
-                clientSocket.BeginReceive();
+                clientControl.BeginReceive();
 
-                while (true)
-                {
-                    string code = Console.ReadLine();
-                    if (code.Equals("exit"))
-                        break;
-                    if (code.Equals("conn"))
-                        clientSocket.reconnect();
-                }
+                Console.ReadKey();
             }
             catch (Exception e)
             {
@@ -50,8 +40,8 @@ namespace Client
             }
             finally
             {
-                if(clientSocket!=null)
-                    clientSocket.Close();
+                if(clientControl!=null)
+                    clientControl.Close();
             }
         }
     }

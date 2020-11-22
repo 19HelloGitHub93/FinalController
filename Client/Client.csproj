@@ -50,7 +50,7 @@
     <Compile Include="accept\Cmd.cs" />
     <Compile Include="accept\HeartBeat.cs" />
     <Compile Include="accept\IClient.cs" />
-    <Compile Include="ClientSocket.cs" />
+    <Compile Include="ClientControl.cs" />
     <Compile Include="accept\Close.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

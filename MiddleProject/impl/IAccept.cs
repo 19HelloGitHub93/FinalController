@@ -1,7 +1,7 @@
 using MiddleProject;
 using MiddleProject.model;
 
-namespace Client.controller
+namespace MiddleProject.impl
 {
     public interface IAccept
     {

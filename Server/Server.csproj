@@ -48,11 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="accept\CloseAccept.cs" />
-    <Compile Include="accept\HeartBeatAccept.cs" />
+    <Compile Include="accept\HeartBeat.cs" />
     <Compile Include="accept\IServer.cs" />
-    <Compile Include="Client.cs" />
     <Compile Include="commend\OpenNote.cs" />
-    <Compile Include="ServerSocket.cs" />
+    <Compile Include="ServerController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

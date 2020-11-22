@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using Client.controller;
-using log4net.Core;
 using MiddleProject;
+using MiddleProject.impl;
 using MiddleProject.model;
 using Server.accept;
-using Server.commend;
 
 namespace Server
 {
     internal class Program
     {
-        private static void init(ServerSocket ss)
+        private static void init(ServerController ss)
         {
             List<IAccept> acs = AssemblyHandler.CreateInstance<IAccept>();
             foreach (IAccept ac in acs)
@@ -26,7 +21,7 @@ namespace Server
         }
         public static void Main(string[] args)
         {
-            ServerSocket server = new ServerSocket(10802);
+            ServerController server = new ServerController(10802);
             try
             {
                 //Console.WriteLine(IPAddress.Broadcast);
@@ -47,9 +42,6 @@ namespace Server
             {
                 if(server!=null)
                     server.Close();
-                
-                HeartBeatAccept instance = AssemblyHandler.GetInstance<HeartBeatAccept>() as HeartBeatAccept;
-                instance.enable = false;
             }
         }
 

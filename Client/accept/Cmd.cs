@@ -1,9 +1,10 @@
 using System;
 using System.Diagnostics;
 using MiddleProject;
+using MiddleProject.impl;
 using MiddleProject.model;
 
-namespace Client.controller
+namespace Client.accept
 {
     public class Cmd:IAccept
     {

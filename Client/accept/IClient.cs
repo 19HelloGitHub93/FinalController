@@ -1,7 +1,7 @@
-namespace Client.controller
+namespace Client.accept
 {
     public interface IClient
     {
-        void init(ClientSocket cs);
+        void init(ClientControl cs);
     }
 }

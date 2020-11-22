@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 
-namespace Server
+namespace MiddleProject.model
 {
-    public class Client
+    public class Heart
     {
         public IPEndPoint ipEndPoint;
         public int lostCount;
