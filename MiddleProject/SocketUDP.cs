@@ -27,13 +27,15 @@ namespace MiddleProject
                     return applicationIsQuitting;
                 }
             }
-            set => applicationIsQuitting = value;
+            set{
+                applicationIsQuitting = value;
+            }
         }
 
         public UdpClient Server
         {
-            get => _server;
-            private set => _server = value;
+            get { return _server; }
+            private set { _server = value;}
         }
 
         public IPEndPoint address { get; private set; }
@@ -57,7 +59,6 @@ namespace MiddleProject
         {
             if (_server != null)
             {
-                //EndPoint targetPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 Data _data = new Data()
                 {
                     code = OrderCode.None,
@@ -72,7 +73,6 @@ namespace MiddleProject
         {
             if (_server != null)
             {
-                //EndPoint targetPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 byte[] b_Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
                 _server.Send(b_Data, b_Data.Length, ipEndPoint);
             }
@@ -112,7 +112,7 @@ namespace MiddleProject
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message); 
+                LogUtil.Log.Error(e.Message);
                 SyncReceiveMessage();
             }
         }
@@ -122,7 +122,6 @@ namespace MiddleProject
             ApplicationIsQuitting = true;
             if (_server != null)
             {
-                //_server.Client.Shutdown(SocketShutdown.Both);
                 _server.Close();
                 _server = null;
                 LogUtil.Log.InfoFormat("[{0}:{1}] 断开连接...", _ip, _port);

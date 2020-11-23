@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Client.accept;
 using MiddleProject;
@@ -9,12 +11,14 @@ namespace Client
 {
     public class ClientControl
     {
+
         private int clientPort; //本机端口
         private int serverPort;
 
         //本地侦听网段
-        private Dictionary<string, SocketUDP> clientSocketDic = new Dictionary<string, SocketUDP>();
-        private Dictionary<string,IPEndPoint> serverIpDic = new Dictionary<string, IPEndPoint>();
+        private IPEndPoint serverIp;
+        public Dictionary<string, SocketUDP> clientDic = new Dictionary<string, SocketUDP>();
+
         public event ReceiveMsgDelegate receiveMsgCallBack;
         
         public ClientControl(int clientPort, int serverPort)
@@ -28,35 +32,19 @@ namespace Client
             List<string> address = ToolForIp.getLocalAddress();
             if (address.Count == 0)
                 return;
-
             foreach (string _address in address)
             {
                 SocketUDP client = new SocketUDP(_address, clientPort);
                 client.Ac_ReceiveMsg += AC_ReceiveMsgCallBack;
-                clientSocketDic.Add(ToolForIp.getChildIp(_address,3),client);
-                
+
+                lock (clientDic)
+                {
+                    addClient(_address,client);
+                }
+  
                 LogUtil.Log.InfoFormat("{0} 开始侦听...",_address);
                 client.SyncReceiveMessage();
-                /*
-                 string ipHead = _address.Remove(_address.LastIndexOf('.') + 1);
-                 int ipEnd = Int32.Parse(_address.Remove(0, ipHead.Length));
-                 
-                 for (int i = 1; i < 255; i++)
-                {
-                    string tempIp = string.Format("{0}{1}", ipHead, i);
-                    try
-                    {
-                        if(client.ApplicationIsQuitting)
-                           break;
-                        client.Send(new Data(OrderCode.Connect,null), tempIp, serverPort);
-                    }
-                    catch (Exception e)
-                    {
-                        LogUtil.Log.Error(e.Message);
-                    }
-                }*/
             }
-            //connect();
         }
 
         /// <summary>
@@ -86,68 +74,91 @@ namespace Client
         
         public void connect()
         {
-            foreach (SocketUDP client in clientSocketDic.Values)
+            lock (clientDic)
             {
-                client.reset();
-                try
+                foreach (SocketUDP client in clientDic.Values)
                 {
-                    client.Send(
-                        new Data(OrderCode.ClientRquest), 
-                        new IPEndPoint(IPAddress.Broadcast, serverPort));
-                }
-                catch (Exception e)
-                {
-                    LogUtil.Log.Error(e.Message);
+                    try
+                    {
+                        client.Send(
+                            new Data(OrderCode.ClientRquest), 
+                            new IPEndPoint(IPAddress.Broadcast, serverPort));
+                    }
+                    catch (Exception e)
+                    {
+                        LogUtil.Log.Error(e.Message);
+                    }
                 }
             }
         }
 
         public bool IsConnected()
         {
-            return serverIpDic.Count > 0;
+            return serverIp!=null;
         }
 
         private void addServer(IPEndPoint ip)
         {
-            string id = ToolForIp.getChildIp(ip.Address.ToString(), 3);
-            if (!serverIpDic.ContainsKey(id))
-                serverIpDic.Add(id,ip);
+            serverIp = ip;
         }
 
-        public void removeServer(IPEndPoint ip)
+        public void removeServer()
         {
-            string id = ToolForIp.getChildIp(ip.Address.ToString(), 3);
-            if (serverIpDic.ContainsKey(id))
-                serverIpDic.Remove(id);
+            serverIp = null;
+        }
+
+        private void addClient(string ip, SocketUDP udp)
+        {
+            lock (clientDic)
+            {
+                string id = ToolForIp.getChildIp(ip,3);
+                if(!clientDic.ContainsKey(id))
+                    clientDic.Add(id,udp);
+            }
+            
+        }
+
+        private SocketUDP getClient(IPEndPoint ip)
+        {
+            lock (clientDic)
+            {
+                string id = ToolForIp.getChildIp(ip.Address.ToString(),3);
+                SocketUDP client;
+                clientDic.TryGetValue(id, out client);
+                return client;
+            }
+            
+        }
+
+        public IPEndPoint getServer()
+        {
+            return serverIp;
         }
 
         public void SendToServer(Data data)
         {
-            foreach ( IPEndPoint serverIp in serverIpDic.Values)
-            {
-                SocketUDP udp = getSocket(serverIp);
-                udp.Send(data,serverIp);
-            }
+            if(serverIp==null)
+                return;
+            SocketUDP udp = getSocket(serverIp);
+            udp.Send(data,serverIp);
         }
-
+        
         private SocketUDP getSocket(IPEndPoint ip)
         {
             string id = ToolForIp.getChildIp(ip.Address.ToString(), 3);
             SocketUDP udp;
-            clientSocketDic.TryGetValue(id, out udp);
+            clientDic.TryGetValue(id, out udp);
             return udp;
         }
 
         public void Close()
         {
-            //LogUtil.Log.InfoFormat("释放所有网段侦听...");
-            
             SendToServer(new Data(OrderCode.Close));
-            foreach (string key in clientSocketDic.Keys)
-                clientSocketDic[key].Close();
+            foreach (string key in clientDic.Keys)
+                clientDic[key].Close();
             
-            clientSocketDic.Clear();
-            serverIpDic.Clear();
+            clientDic.Clear();
+            removeServer();
             (AssemblyHandler.GetInstance<HeartBeat>() as HeartBeat).Close();
         }
 

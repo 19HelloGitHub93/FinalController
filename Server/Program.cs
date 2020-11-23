@@ -14,10 +14,12 @@ namespace Server
             List<IAccept> acs = AssemblyHandler.CreateInstance<IAccept>();
             foreach (IAccept ac in acs)
                 ss.receiveMsgCallBack += ac.acceptMessage;
+                
             
             List<IServer> ses = AssemblyHandler.CreateInstance<IServer>();
             foreach (IServer se in ses)
                 se.init(ss);
+                
         }
         public static void Main(string[] args)
         {

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using MiddleProject;
 using MiddleProject.impl;
@@ -51,12 +53,13 @@ namespace Client.accept
                         if ((int)serverHeart.getTimeinterval() > lossTime)
                         {
                             serverHeart.lostCount++;
-                            LogUtil.Log.DebugFormat("服务端 [{0}] 丢包次数:{1}",serverHeart.ipEndPoint,serverHeart.lostCount);
+                            LogUtil.Log.DebugFormat("服务端 [{0}] 丢包次数:{1} 尝试重新连接",serverHeart.ipEndPoint,serverHeart.lostCount);
                             clControl.connect();
                         }
+                            
                         if (serverHeart.lostCount > lostCount)
                         {
-                            clControl.removeServer(serverHeart.ipEndPoint);
+                            clControl.removeServer();
                             LogUtil.Log.InfoFormat("服务器 [{0}] 已断开！！",serverHeart.ipEndPoint);
                         }
                     }

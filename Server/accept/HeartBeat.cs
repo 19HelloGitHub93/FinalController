@@ -58,12 +58,14 @@ namespace Server.accept
             if (server != null)
             {
                 LogUtil.Log.Debug("启动心跳检测");
+                
                 Heart client=null;
                 while (enable)
                 {
-                    foreach (IPEndPoint ip in server.getClients())
+                    List<IPEndPoint> clienIps = server.getClients();
+                    for (int i=0;i<clienIps.Count;i++)
                     {
-                        if (clientHeartDic.TryGetValue(ip, out client))
+                        if (clientHeartDic.TryGetValue(clienIps[i], out client))
                         {
                             client.activeTime = DateTime.Now;
                             if ((int)client.getTimeinterval() > lossTime)
@@ -74,14 +76,13 @@ namespace Server.accept
                             
                             if (client.lostCount > lostCount)
                             {
-                                server.removeClient(ip);
-                                clientHeartDic.Remove(ip);
+                                server.removeClient(client.ipEndPoint);
+                                clientHeartDic.Remove(client.ipEndPoint);
                             }
                         }
-                    }
-                    //LogUtil.Log.Debug("心跳检测中...");
-                    if(client!=null)
                         server.Send(new Data(OrderCode.HeartBeat),client.ipEndPoint);
+                    }
+  
                     Thread.Sleep(waitTime);
                 }
             }

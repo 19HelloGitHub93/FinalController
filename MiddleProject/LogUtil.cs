@@ -8,7 +8,7 @@ namespace MiddleProject
 {
     public class LogUtil
     {
-        private static Dictionary<Type,ILog> logDic = new Dictionary<Type, ILog>();
+        private static Dictionary<Type, ILog> logDic = new Dictionary<Type, ILog>();
         public static ILog Log
         {
             get
@@ -28,13 +28,16 @@ namespace MiddleProject
         private static ILog getILog(Type t)
         {
             ILog _log;
-            bool result = logDic.TryGetValue(t, out _log);
-            if (!result)
+            lock (logDic)
             {
-                _log = LogManager.GetLogger(t);
-                logDic.Add(t,_log);
+                bool result = logDic.TryGetValue(t, out _log);
+                if (!result)
+                {
+                    _log = LogManager.GetLogger(t);
+                    logDic.Add(t,_log);
+                }
+                return _log;
             }
-            return _log;
         }
 
     }

@@ -20,6 +20,7 @@ namespace Client
             List<IClient> cls = AssemblyHandler.CreateInstance<IClient>();
             foreach (IClient cl in cls)
                 cl.init(cs);
+                
         }
         public static void Main(string[] args)
         {

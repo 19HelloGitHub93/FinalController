@@ -14,10 +14,17 @@ namespace Server
         private SocketUDP _server;
         private string _ip;
 
-        public string Ip => _ip;
-        public int Port => port;
+        public string Ip { 
+            get {return _ip;}
+        }
+        public int Port {
+            get
+            {
+                return port;
+            }
+        } 
 
-        private Dictionary<string,IPEndPoint> clientDic = new Dictionary<string, IPEndPoint>();
+        private List<IPEndPoint> clientDic = new List<IPEndPoint>();
         public event ReceiveMsgDelegate receiveMsgCallBack;
 
         public ServerController(int serverPort)
@@ -64,41 +71,31 @@ namespace Server
         public void addClient(IPEndPoint ip)
         {
             LogUtil.Log.InfoFormat("客户端 [{0}] 已连接...",ip);
-            string id = ToolForIp.getChildIp(ip.Address.ToString(), 4);
-            if (!clientDic.ContainsKey(id))
+            if (!clientDic.Contains(ip))
             {
-                clientDic.Add(id,ip);
+                clientDic.Add(ip);
                 LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
             }
-            
         }
 
         public void removeClient(IPEndPoint ip)
         {
-            string id = ToolForIp.getChildIp(ip.Address.ToString(), 4);
-            if (clientDic.ContainsKey(id))
+            if (clientDic.Contains(ip))
             {
-                clientDic.Remove(id);
+                clientDic.Remove(ip);
                 LogUtil.Log.InfoFormat("客户端 [{0}] 已断开...",ip);
                 LogUtil.Log.InfoFormat("当前在线数:{0}",clientDic.Count);
             }
         }
 
-        public IPEndPoint getClient(string id)
+        public IPEndPoint getClient(IPEndPoint ip)
         {
-            IPEndPoint ip;
-            clientDic.TryGetValue(id, out ip);
-            return ip;
+            return clientDic.Find(item => item == ip); 
         }
         
         public List<IPEndPoint> getClients()
         {
-            List<IPEndPoint> clents = new List<IPEndPoint>();
-            foreach (var item in clientDic.Values)
-            {
-                clents.Add(item);
-            }
-            return clents;
+            return clientDic; 
         }
 
         public void Close()
