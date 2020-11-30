@@ -9,7 +9,7 @@ namespace MiddleProject.model
         {
             OrderCode.HeartBeat,
             OrderCode.ClientRquest,
-            OrderCode.Close
+            OrderCode.OffLine
         };
 
         public static bool IsBlock(Data data)

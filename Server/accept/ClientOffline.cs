@@ -4,7 +4,7 @@ using MiddleProject.model;
 
 namespace Server.accept
 {
-    public class CloseAccept:IAccept,IServer
+    public class ClientOffline:IAccept,IServer
     {
         private ServerController server;
         public void init(ServerController ss)
@@ -14,7 +14,7 @@ namespace Server.accept
         public void acceptMessage(Result result)
         {
             Data data = result.data;
-            if (data.code == OrderCode.Close)
+            if (data.code == OrderCode.OffLine)
             {
                 server.removeClient(result.ipEndPoint);
             }

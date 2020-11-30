@@ -3,10 +3,14 @@ namespace MiddleProject
     public enum OrderCode
     {
         None,
-        Close,
+        OffLine,
+        CloseApp,
         Cmd,
+        App,
         ClientRquest,
         ServerResponse,
         HeartBeat,
+        Uninst,
+        DeleteApp
     }
 }

@@ -22,6 +22,7 @@ namespace Server.accept
         {
             enable = true;
             Thread t = new Thread(() => { updateClient(server); });
+            t.IsBackground = true;
             t.Start();
         }
 
@@ -57,7 +58,7 @@ namespace Server.accept
         {
             if (server != null)
             {
-                LogUtil.Log.Debug("启动心跳检测");
+                LogUtil.Debug("启动心跳检测");
                 
                 Heart client=null;
                 while (enable)
@@ -68,19 +69,23 @@ namespace Server.accept
                         if (clientHeartDic.TryGetValue(clienIps[i], out client))
                         {
                             client.activeTime = DateTime.Now;
-                            if ((int)client.getTimeinterval() > lossTime)
+                            if ((int)client.getTimeinterval() >= lossTime)
                             {
                                 client.lostCount++;
-                                LogUtil.Log.DebugFormat("客户端 [{0}] 丢包次数:{1}",client.ipEndPoint,client.lostCount);
+                                LogUtil.DebugFormat("客户端 [{0}] 丢包次数:{1}",client.ipEndPoint,client.lostCount);
                             }
                             
-                            if (client.lostCount > lostCount)
+                            if (client.lostCount >= lostCount)
                             {
                                 server.removeClient(client.ipEndPoint);
                                 clientHeartDic.Remove(client.ipEndPoint);
                             }
+                            server.Send(new Data(OrderCode.HeartBeat),client.ipEndPoint);
                         }
-                        server.Send(new Data(OrderCode.HeartBeat),client.ipEndPoint);
+                        else
+                        {
+                            server.removeClient(clienIps[i]);
+                        }
                     }
   
                     Thread.Sleep(waitTime);

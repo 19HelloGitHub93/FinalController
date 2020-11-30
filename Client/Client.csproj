@@ -39,15 +39,20 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="accept\DeleteApp.cs" />
+    <Compile Include="accept\OpenApp.cs" />
     <Compile Include="accept\Cmd.cs" />
     <Compile Include="accept\HeartBeat.cs" />
     <Compile Include="accept\IClient.cs" />
+    <Compile Include="accept\Uninstall.cs" />
     <Compile Include="ClientControl.cs" />
-    <Compile Include="accept\Close.cs" />
+    <Compile Include="accept\CloseApp.cs" />
+    <Compile Include="SystemHandle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

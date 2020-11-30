@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using Client.accept;
 using MiddleProject;
+using MiddleProject.impl;
 using MiddleProject.model;
 
 namespace Client
@@ -14,6 +15,8 @@ namespace Client
 
         private int clientPort; //本机端口
         private int serverPort;
+
+        public Action<string> msgCallback;
 
         //本地侦听网段
         private IPEndPoint serverIp;
@@ -25,6 +28,18 @@ namespace Client
         {
             this.clientPort = clientPort;
             this.serverPort = serverPort;
+            init();
+        }
+
+        private void init()
+        {
+            List<IAccept> acs = AssemblyHandler.CreateInstance<IAccept>();
+            foreach (IAccept ac in acs)
+                this.receiveMsgCallBack += ac.acceptMessage;
+            
+            List<IClient> cls = AssemblyHandler.CreateInstance<IClient>();
+            foreach (IClient cl in cls)
+                cl.init(this);
         }
         
         public void BeginReceive()
@@ -42,7 +57,9 @@ namespace Client
                     addClient(_address,client);
                 }
   
-                LogUtil.Log.InfoFormat("{0} 开始侦听...",_address);
+                LogUtil.InfoFormat("{0} 开始侦听...",_address);
+                if(msgCallback!=null)
+                    msgCallback(string.Format("{0} 开始侦听...",_address));
                 client.SyncReceiveMessage();
             }
         }
@@ -55,7 +72,7 @@ namespace Client
         private void AC_ReceiveMsgCallBack(Result result)
         {
             if(!BlockKey.IsBlock(result.data))
-                LogUtil.Log.DebugFormat("收到[{0}]:{1}",result.ipEndPoint,result.data);
+                LogUtil.DebugFormat("收到[{0}]:{1}",result.ipEndPoint,result.data);
             
             OrderCode code = result.data.code;
             if (code == OrderCode.ServerResponse)
@@ -67,16 +84,21 @@ namespace Client
 
         private void conSuccess(Result result)
         {
-            LogUtil.Log.InfoFormat("连接服务器 [{0}] 成功！！",result.ipEndPoint);
-            addServer(result.ipEndPoint);
-            SendToServer(new Data(OrderCode.HeartBeat));
+            if (serverIp == null)
+            {
+                addServer(result.ipEndPoint);
+                SendToServer(new Data(OrderCode.HeartBeat));
+                LogUtil.InfoFormat("连接服务器 [{0}] 成功！！",result.ipEndPoint);
+                if (msgCallback != null)
+                    msgCallback(string.Format("连接服务器 [{0}] 成功！！", result.ipEndPoint));
+            }
         }
         
         public void connect()
         {
             lock (clientDic)
             {
-                foreach (SocketUDP client in clientDic.Values)
+                foreach (SocketUDP client in clientDic.Values.ToArray())
                 {
                     try
                     {
@@ -86,7 +108,7 @@ namespace Client
                     }
                     catch (Exception e)
                     {
-                        LogUtil.Log.Error(e.Message);
+                        LogUtil.Error(e.Message);
                     }
                 }
             }
@@ -153,13 +175,16 @@ namespace Client
 
         public void Close()
         {
-            SendToServer(new Data(OrderCode.Close));
+            SendToServer(new Data(OrderCode.OffLine));
             foreach (string key in clientDic.Keys)
+            {
+                LogUtil.InfoFormat("[{0}] 断开连接...", clientDic[key].address);
                 clientDic[key].Close();
+            }
             
             clientDic.Clear();
             removeServer();
-            (AssemblyHandler.GetInstance<HeartBeat>() as HeartBeat).Close();
+            //(AssemblyHandler.GetInstance<HeartBeat>() as HeartBeat).CloseApp();
         }
 
     }

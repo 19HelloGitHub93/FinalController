@@ -22,6 +22,7 @@ namespace Client.accept
         {
             enable = true;
             Thread t = new Thread(() => { updateServer(cs); });
+            t.IsBackground = true;
             t.Start();
         }
         
@@ -44,23 +45,25 @@ namespace Client.accept
         {
             if (clControl != null)
             {
-                LogUtil.Log.Debug("启动心跳检测");
+                LogUtil.Debug("启动心跳检测");
                 while (enable)
                 {
                     if (clControl.IsConnected())
                     {
                         serverHeart.activeTime = DateTime.Now;
-                        if ((int)serverHeart.getTimeinterval() > lossTime)
+                        if ((int)serverHeart.getTimeinterval() >= lossTime)
                         {
                             serverHeart.lostCount++;
-                            LogUtil.Log.DebugFormat("服务端 [{0}] 丢包次数:{1} 尝试重新连接",serverHeart.ipEndPoint,serverHeart.lostCount);
+                            LogUtil.DebugFormat("服务端 [{0}] 丢包次数:{1} 尝试重新连接",serverHeart.ipEndPoint,serverHeart.lostCount);
                             clControl.connect();
                         }
                             
-                        if (serverHeart.lostCount > lostCount)
+                        if (serverHeart.lostCount >= lostCount)
                         {
                             clControl.removeServer();
-                            LogUtil.Log.InfoFormat("服务器 [{0}] 已断开！！",serverHeart.ipEndPoint);
+                            LogUtil.InfoFormat("服务器 [{0}] 已断开！！",serverHeart.ipEndPoint);
+                            if (clControl.msgCallback != null)
+                                clControl.msgCallback(string.Format("服务器 [{0}] 已断开！！", serverHeart.ipEndPoint));
                         }
                     }
                     else

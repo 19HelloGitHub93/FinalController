@@ -32,14 +32,14 @@ namespace Client.accept
                     p.StandardInput.AutoFlush = true;
 
                     //获取cmd窗口的输出信息
-                    string output = p.StandardOutput.ReadToEnd();
+                    //string output = p.StandardOutput.ReadToEnd();
                     //等待程序执行完退出进程
                     p.WaitForExit();
                     p.Close();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.StackTrace);
+                    LogUtil.Error(e.StackTrace);
                 }
             }
         }

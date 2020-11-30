@@ -43,10 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="accept\CloseAccept.cs" />
+    <Compile Include="accept\ClientOffline.cs" />
     <Compile Include="accept\HeartBeat.cs" />
     <Compile Include="accept\IServer.cs" />
-    <Compile Include="commend\OpenNote.cs" />
     <Compile Include="ServerController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +59,9 @@
       <Project>{84af083b-99c0-440d-9e65-392e93d4dc4a}</Project>
       <Name>MiddleProject</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="commend" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

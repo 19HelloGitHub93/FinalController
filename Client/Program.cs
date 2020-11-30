@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Management;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,38 +13,38 @@ namespace Client
 {
     internal class Program
     {
-        private static void init(ClientControl cs)
-        {
-            List<IAccept> acs = AssemblyHandler.CreateInstance<IAccept>();
-            foreach (IAccept ac in acs)
-                cs.receiveMsgCallBack += ac.acceptMessage;
-            
-            List<IClient> cls = AssemblyHandler.CreateInstance<IClient>();
-            foreach (IClient cl in cls)
-                cl.init(cs);
-                
-        }
         public static void Main(string[] args)
         {
-            ClientControl clientControl = null;
-            try
-            {
-                clientControl = new ClientControl(10801, 10802);
-                
-                init(clientControl);
-                
-                clientControl.BeginReceive();
+//            ClientControl clientControl = null;
+//            try
+//            {
+//                clientControl = new ClientControl(10801, 10802);
+//                
+//                clientControl.BeginReceive();
+//
+//                Console.ReadKey();
+//            }
+//            catch (Exception e)
+//            {
+//                Console.WriteLine(e);
+//            }
+//            finally
+//            {
+//                if(clientControl!=null)
+//                    clientControl.Close();
+//            }
+        }
 
-                Console.ReadKey();
-            }
-            catch (Exception e)
+        static void KillProcessAndChildren(int pid)
+        {
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection moc = searcher.Get();
+            foreach (ManagementObject mo in moc)
             {
-                Console.WriteLine(e);
-            }
-            finally
-            {
-                if(clientControl!=null)
-                    clientControl.Close();
+                //KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
+                int _pid = Convert.ToInt32(mo["ProcessID"]);
+                Process proc = Process.GetProcessById(_pid);
+                Console.WriteLine("{0}:{1}",proc.ProcessName,proc.Id);
             }
         }
     }

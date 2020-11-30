@@ -80,8 +80,16 @@ namespace MiddleProject
 
         public void SyncReceiveMessage()
         {
-            if(_server!=null)
-                _server.BeginReceive(receiveCallBack, this);
+            try
+            {
+                if(_server!=null)
+                    _server.BeginReceive(receiveCallBack, this);
+            }
+            catch (Exception e)
+            {
+                LogUtil.Error(e.Message);
+            }
+            
         }
 
         private void receiveCallBack(IAsyncResult ar)
@@ -112,7 +120,7 @@ namespace MiddleProject
             }
             catch (Exception e)
             {
-                LogUtil.Log.Error(e.Message);
+                LogUtil.Error(e.Message);
                 SyncReceiveMessage();
             }
         }
@@ -124,7 +132,6 @@ namespace MiddleProject
             {
                 _server.Close();
                 _server = null;
-                LogUtil.Log.InfoFormat("[{0}:{1}] 断开连接...", _ip, _port);
             }
         }
 
