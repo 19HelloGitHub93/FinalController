@@ -7,9 +7,9 @@ namespace MiddleProject.model
         /// </summary>
         public static readonly OrderCode[] keyWord =
         {
-            OrderCode.HeartBeat,
-            OrderCode.ClientRquest,
-            OrderCode.OffLine
+            //OrderCode.HeartBeat,
+            //OrderCode.ClientRquest,
+            //OrderCode.OffLine
         };
 
         public static bool IsBlock(Data data)

@@ -138,6 +138,7 @@ namespace ServerWinform
                 
                 server.AcAddclient += clientOnline;
                 server.AcRemoveclient += clientOffline;
+                //LogUtil.callback += ((s) => { System.Diagnostics.Debug.WriteLine(s); });
                 server.BeginReceive();
             }
             catch (Exception e)
@@ -232,9 +233,14 @@ namespace ServerWinform
             return index;
         }
 
+        delegate void MsgCallBackInvoke();
         private void UI_updateOnlineCount()
         {
-            lab_clientCount.Text = string.Format("{0}/{1}", getOnlineCount(), clientDic.Count);
+            this.Invoke(new MsgCallBackInvoke(() =>
+            {
+                lab_clientCount.Text = string.Format("{0}/{1}", getOnlineCount(), clientDic.Count);
+            }));
+            //lab_clientCount.Text = string.Format("{0}/{1}", getOnlineCount(), clientDic.Count);
         }
 
         private void selectedAll(bool status)

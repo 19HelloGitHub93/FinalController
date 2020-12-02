@@ -2,6 +2,11 @@ namespace MiddleProject
 {
     public class ToolForUrl
     {
+        /// <summary>
+        /// 获取路径文件夹名
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static string getDirName(string path)
         {
             int index = path.LastIndexOf('\\');
@@ -13,6 +18,12 @@ namespace MiddleProject
             }
             return parentUrl;
         }
+        /// <summary>
+        /// 获取文件名
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="filterExten">过滤扩展名</param>
+        /// <returns></returns>
         public static string getDirEndName(string path,bool filterExten=false)
         {
             string endName = null;
@@ -24,10 +35,21 @@ namespace MiddleProject
 
             if (filterExten)
             {
-                endName = endName.Split('.')[0];
+                endName = filterEnd(endName);
             }
 
             return endName;
+        }
+
+        /// <summary>
+        /// 去除扩展名
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string filterEnd(string path)
+        {
+            string[] split = path.Split('.');
+            return split[split.Length - 2];
         }
     }
 }

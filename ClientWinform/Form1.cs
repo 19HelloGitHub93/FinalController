@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Client;
 using Client.accept;
@@ -27,7 +29,6 @@ namespace ClientWinform
         private void Form1_Shown(object sender, EventArgs e)
         {
             Start();
-            
         }
         
         private void Start()
@@ -36,17 +37,16 @@ namespace ClientWinform
             {
                 label_runStatus.Text = "运行中...";
                 button_Start.Enabled = false;
-                //_clientControl.msgCallback += msgCallback;
                 _clientControl = new ClientControl(10801, 10802);
-                
                 LogUtil.callback += msgCallback;
+                
                 (AssemblyHandler.GetInstance<CloseApp>() as CloseApp).callback += HideWindow;
                 (AssemblyHandler.GetInstance<Uninstall>() as Uninstall).callback += Quit;
-                
-                (AssemblyHandler.GetInstance<Uninstall>() as Uninstall).localUrl = Application.ExecutablePath;
-                
-                
+                //(AssemblyHandler.GetInstance<Uninstall>() as Uninstall).localUrl = Application.ExecutablePath;
+
                 _clientControl.BeginReceive();
+
+                //CreateShortcut();
             }
             catch (Exception e)
             {
@@ -63,8 +63,6 @@ namespace ClientWinform
             {
                 textBox_infoPanel.AppendText(m+Environment.NewLine);
             }),msg);
-            
-            //textBox_infoPanel.AppendText(Environment.NewLine);
         }
 
         private void Stop()
@@ -134,5 +132,33 @@ namespace ClientWinform
             Stop();
             Close();
         }
+        
+//        private void CreateShortcut()
+//        {
+//            string StartUpPath = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\";
+//            string appName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
+//            string appDir = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+//
+//            string linkPath = StartUpPath + ToolForUrl.filterEnd(appName) + ".lnk";
+//            string targetPath = appDir + appName;
+//
+//            if (File.Exists(linkPath))
+//                return;
+//            
+//            try
+//            {
+//                var shellType = Type.GetTypeFromProgID("WScript.Shell");
+//                dynamic shell = Activator.CreateInstance(shellType);
+//                var shortcut = shell.CreateShortcut(linkPath);
+//                shortcut.TargetPath = targetPath;
+//                //shortcut.Arguments = args;启动参数
+//                shortcut.WorkingDirectory = appDir;
+//                shortcut.Save();
+//            }
+//            catch (Exception e)
+//            {
+//                LogUtil.Error(e.Message);
+//            }
+//        }
     }
 }

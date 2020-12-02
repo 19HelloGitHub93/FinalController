@@ -10,7 +10,6 @@ namespace MiddleProject
         public static List<T> CreateInstance<T>()
         {
             List<T> classArray = new List<T>();
-            Type type = typeof(T);
             Assembly assembly = Assembly.GetCallingAssembly();
             foreach (Type item in assembly.GetTypes())
             {

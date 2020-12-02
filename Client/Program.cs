@@ -33,6 +33,11 @@ namespace Client
 //                if(clientControl!=null)
 //                    clientControl.Close();
 //            }
+
+            string appName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
+            string appUrl = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+            Console.WriteLine(appName);
+            Console.WriteLine(appUrl);
         }
 
         static void KillProcessAndChildren(int pid)

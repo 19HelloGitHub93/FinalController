@@ -12,7 +12,6 @@ namespace Client
 {
     public class ClientControl
     {
-
         private int clientPort; //本机端口
         private int serverPort;
 

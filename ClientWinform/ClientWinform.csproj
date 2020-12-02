@@ -97,10 +97,14 @@
     <ProjectReference Include="..\Client\Client.csproj">
       <Project>{17dbe6d1-1ea1-463f-b5ee-a5b1f6c75ad2}</Project>
       <Name>Client</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\MiddleProject\MiddleProject.csproj">
       <Project>{84af083b-99c0-440d-9e65-392e93d4dc4a}</Project>
       <Name>MiddleProject</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

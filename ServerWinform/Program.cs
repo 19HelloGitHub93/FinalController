@@ -21,6 +21,7 @@ namespace ServerWinform
             Application.SetCompatibleTextRenderingDefault(false);
             
             //ToolForCmd.addFirewall(Application.ExecutablePath);
+            //NativeMethods.AllocConsole();
             globalMutex();
             
             Application.Run(new Form1());
@@ -30,6 +31,7 @@ namespace ServerWinform
         static void OnApplicationExit(object sender, EventArgs e)
         {
             RelMutex();
+            //NativeMethods.FreeConsole();
         }
 
         private static void globalMutex()
