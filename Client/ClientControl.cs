@@ -86,7 +86,7 @@ namespace Client
             if (serverIp == null)
             {
                 addServer(result.ipEndPoint);
-                SendToServer(new Data(OrderCode.HeartBeat));
+                SendToServer(OrderCode.HeartBeat);
                 LogUtil.InfoFormat("连接服务器 [{0}] 成功！！",result.ipEndPoint);
                 if (msgCallback != null)
                     msgCallback(string.Format("连接服务器 [{0}] 成功！！", result.ipEndPoint));
@@ -156,7 +156,12 @@ namespace Client
             return serverIp;
         }
 
-        public void SendToServer(Data data)
+        public void SendToServer(OrderCode code, string msg = null)
+        {
+            SendToServer(new Data(code, msg));
+        }
+
+        private void SendToServer(Data data)
         {
             if(serverIp==null)
                 return;
@@ -174,7 +179,7 @@ namespace Client
 
         public void Close()
         {
-            SendToServer(new Data(OrderCode.OffLine));
+            SendToServer(OrderCode.OffLine);
             foreach (string key in clientDic.Keys)
             {
                 LogUtil.InfoFormat("[{0}] 断开连接...", clientDic[key].address);

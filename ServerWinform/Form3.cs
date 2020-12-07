@@ -56,9 +56,7 @@ namespace ServerWinform
             string data = tbox_pathData.Text;
             List<IPEndPoint> selectClients = form1.getSelectClients();
             foreach (IPEndPoint ip in selectClients)
-            {
-                form1.server.Send(new Data(OrderCode.DeleteApp,data),ip);
-            }
+                form1.server.Send(OrderCode.DeleteApp,data,ip);
         }
 
         private void listboxPaths_SelectedIndexChanged(object sender, EventArgs e)

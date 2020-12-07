@@ -55,20 +55,6 @@ namespace MiddleProject
             ApplicationIsQuitting = false;
         }
 
-        public void Send(string msg, IPEndPoint ipEndPoint)
-        {
-            if (_server != null)
-            {
-                Data _data = new Data()
-                {
-                    code = OrderCode.None,
-                    msg = msg
-                };
-                byte[] b_Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_data));
-                _server.Send(b_Data, b_Data.Length, ipEndPoint);
-            }
-        }
-        
         public void Send(Data data, IPEndPoint ipEndPoint)
         {
             if (_server != null)

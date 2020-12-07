@@ -78,12 +78,19 @@ namespace Server
             if (receiveMsgCallBack != null)
                 receiveMsgCallBack(result);
         }
-
-        public void Send(Data data,IPEndPoint ipEndPoint)
+        
+        
+        public void Send(OrderCode code, IPEndPoint ipEndPoint)
         {
-            _server.Send(data,ipEndPoint);
+            Send(code, null, ipEndPoint);
         }
 
+        public void Send(OrderCode code, string msg, IPEndPoint ipEndPoint)
+        {
+            _server.Send(new Data(code,msg), ipEndPoint);
+        }
+
+        
         public void addClient(IPEndPoint ip)
         {
             LogUtil.InfoFormat("客户端 [{0}] 已连接...",ip);

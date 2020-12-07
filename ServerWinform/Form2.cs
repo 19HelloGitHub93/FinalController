@@ -41,15 +41,12 @@ namespace ServerWinform
 
         private void btn_appRun_Click(object sender, EventArgs e)
         {
-            string d = tbox_appPath.Text;
-            if (d == String.Empty)
+            string path = tbox_appPath.Text;
+            if (path == String.Empty)
                 return;
             List<IPEndPoint> cliens = form1.getSelectClients();
             foreach (IPEndPoint ip in cliens)
-            {
-                Data data = new Data(OrderCode.App,d);
-                form1.server.Send(data,ip);
-            }
+                form1.server.Send(OrderCode.App,path,ip);
         }
         
         private void btn_appSave_Click(object sender, EventArgs e)
@@ -86,15 +83,12 @@ namespace ServerWinform
 
         private void btn_batRun_Click(object sender, EventArgs e)
         {
-            string d = tbox_batData.Text;
-            if (d == String.Empty)
+            string data = tbox_batData.Text;
+            if (data == String.Empty)
                 return;
             List<IPEndPoint> cliens = form1.getSelectClients();
             foreach (IPEndPoint ip in cliens)
-            {
-                Data data = new Data(OrderCode.Cmd,d);
-                form1.server.Send(data,ip);
-            }
+                form1.server.Send(OrderCode.Cmd,data,ip);
         }
 
         private void btn_remove_Click(object sender, EventArgs e)

@@ -71,7 +71,7 @@ namespace Client.accept
                         clControl.connect();
                     }
                     
-                    clControl.SendToServer(new Data(OrderCode.HeartBeat));
+                    clControl.SendToServer(OrderCode.HeartBeat);
 
                     Thread.Sleep(waitTime);
                 }

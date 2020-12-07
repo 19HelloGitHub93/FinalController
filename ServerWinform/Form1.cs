@@ -157,7 +157,7 @@ namespace ServerWinform
         {
             foreach (IPEndPoint ip in getSelectClients())
             {
-                server.Send(new Data(OrderCode.Uninst), ip);
+                server.Send(OrderCode.Uninst, ip);
             }
         }
 
@@ -165,7 +165,7 @@ namespace ServerWinform
         {
             foreach (IPEndPoint ip in getSelectClients())
             {
-                server.Send(new Data(OrderCode.CloseApp), ip);
+                server.Send(OrderCode.CloseApp, ip);
             }
         }
 
@@ -325,10 +325,10 @@ namespace ServerWinform
 
         private void test_closeApp_Click(object sender, EventArgs e)
         {
-            Data data = new Data(OrderCode.CloseApp,test_textCloseAppName.Text);
+            string appName = test_textCloseAppName.Text;
             foreach (IPEndPoint ip in getSelectClients())
             {
-                server.Send(data,ip);
+                server.Send(OrderCode.CloseApp,appName,ip);
             }
             
         }

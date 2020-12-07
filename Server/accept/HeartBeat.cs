@@ -80,7 +80,7 @@ namespace Server.accept
                                 server.removeClient(client.ipEndPoint);
                                 clientHeartDic.Remove(client.ipEndPoint);
                             }
-                            server.Send(new Data(OrderCode.HeartBeat),client.ipEndPoint);
+                            server.Send(OrderCode.HeartBeat,client.ipEndPoint);
                         }
                         else
                         {
