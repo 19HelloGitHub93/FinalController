@@ -146,9 +146,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MiddleProject\MiddleProject.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{84af083b-99c0-440d-9e65-392e93d4dc4a}</Project>
-      <Name>MiddleProject</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{5f2a9dfd-0c54-44e1-9e25-ac229233f055}</Project>

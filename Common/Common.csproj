@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MiddleProject</RootNamespace>
-    <AssemblyName>MiddleProject</AssemblyName>
+    <AssemblyName>Common</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -60,9 +60,9 @@
     <Compile Include="model\Result.cs" />
     <Compile Include="SocketUDP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ToolForCmd.cs" />
-    <Compile Include="ToolForIp.cs" />
-    <Compile Include="ToolForUrl.cs" />
+    <Compile Include="utils\ToolForCmd.cs" />
+    <Compile Include="utils\ToolForIp.cs" />
+    <Compile Include="utils\ToolForUrl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="log4net.config">

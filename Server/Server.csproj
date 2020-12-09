@@ -55,13 +55,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MiddleProject\MiddleProject.csproj">
-      <Project>{84af083b-99c0-440d-9e65-392e93d4dc4a}</Project>
-      <Name>MiddleProject</Name>
-    </ProjectReference>
+    <Folder Include="commend" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="commend" />
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{84af083b-99c0-440d-9e65-392e93d4dc4a}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

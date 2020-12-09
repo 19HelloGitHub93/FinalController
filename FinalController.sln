@@ -1,10 +1,10 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{17DBE6D1-1EA1-463F-B5EE-A5B1F6C75AD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{5F2A9DFD-0C54-44E1-9E25-AC229233F055}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiddleProject", "MiddleProject\MiddleProject.csproj", "{84AF083B-99C0-440D-9E65-392E93D4DC4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{84AF083B-99C0-440D-9E65-392E93D4DC4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientWinform", "ClientWinform\ClientWinform.csproj", "{ED1AEDA0-68CE-4B3D-913F-C56B3A1A0F01}"
 EndProject

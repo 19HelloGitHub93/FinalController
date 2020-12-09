@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using MiddleProject;
 using MiddleProject.impl;
+using MiddleProject.utils;
 
 namespace ClientWinform
 {

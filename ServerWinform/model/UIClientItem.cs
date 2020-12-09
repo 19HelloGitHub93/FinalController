@@ -1,6 +1,7 @@
 using System.Net;
 using System.Windows.Forms;
 using MiddleProject;
+using MiddleProject.utils;
 
 namespace ServerWinform.model
 {

