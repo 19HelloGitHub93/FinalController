@@ -48,7 +48,8 @@ namespace ClientWinform
 
                 _clientControl.BeginReceive();
 
-                ToolForCmd.CreateShortcut();
+                //创建自启快捷方式
+                //ToolForCmd.CreateShortcut();
 
             }
             catch (Exception e)
